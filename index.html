@@ -119,14 +119,8 @@
             font-weight: bold;
             transition: 0.2s;
         }
-        button:hover {
-            opacity: 0.92;
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+button:hover { opacity: 0.92; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-blue { background: var(--blue); }
         .btn-red { background: var(--primary); }
@@ -143,13 +137,10 @@
             position: relative;
         }
 
-        #cy {
-            flex-grow: 1;
-            background: white;
-        }
+        #cy { flex-grow: 1; background: white; }
 
         #result-area {
-            height: 40%;
+            height: 45%;
             background: white;
             border-top: 2px solid #ddd;
             padding: 15px;
@@ -159,15 +150,12 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.95em;
+            font-size: 0.9em;
             min-width: 500px;
             margin-bottom: 12px;
         }
 
-        table, th, td {
-            border: 1px solid #bbb;
-            text-align: center;
-        }
+        table, th, td { border: 1px solid #bbb; text-align: center; }
 
         th {
             background: var(--dark);
@@ -177,9 +165,7 @@
             top: 0;
         }
 
-        td {
-            padding: 6px;
-        }
+        td { padding: 6px; }
 
         .hint-text {
             font-size: 0.75em;
@@ -196,16 +182,7 @@
             background: #fcfcfc;
         }
 
-        .result-block h4 {
-            margin: 0 0 10px 0;
-            color: var(--dark);
-        }
-
-        .mini-note {
-            font-size: 13px;
-            color: #5d6d7e;
-            margin-bottom: 10px;
-        }
+        .result-block h4 { margin: 0 0 10px 0; color: var(--dark); }
 
         #status-log {
             font-size: 11px;
@@ -216,13 +193,53 @@
             padding: 5px;
             background: #fff;
         }
+
+        .field-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .field-grid-2.with-top-space {
+            margin-top: 8px;
+        }
+
+        .field-card {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark);
+            padding-left: 2px;
+        }
+
+        .path-select-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 6px;
+            align-items: end;
+            margin-bottom: 8px;
+        }
+
+        .path-arrow {
+            align-self: center;
+            margin-top: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--blue);
+            user-select: none;
+        }
     </style>
 </head>
 <body>
 
 <div id="sidebar">
     <h2>Graph PTIT Visualizer</h2>
-    <p class="hint-text">💡 Double click vùng trắng: Thêm đỉnh | Click cạnh: Đổi trọng số</p>
+<p class="hint-text">💡 Double click vùng trắng: Thêm đỉnh | Click cạnh: Đổi trọng số</p>
 
     <div class="section">
         <h3>1. Cấu hình & Tương tác</h3>
@@ -242,7 +259,30 @@
             <input type="text" id="v-edge" placeholder="v">
             <input type="number" id="w-edge" placeholder="w">
         </div>
-        <button class="btn-green" onclick="updateEdgeManual()" style="width:100%">Cập nhật cạnh</button>
+<button class="btn-green" onclick="updateEdgeManual()" style="width:100%">Cập nhật cạnh</button>
+
+        <div class="field-grid-2 with-top-space">
+            <div class="field-card">
+                <label class="field-label" for="random-node-count">Số đỉnh</label>
+                <input type="number" id="random-node-count" min="2" value="5" placeholder="Ví dụ: 5" title="Số lượng đỉnh sẽ được tạo">
+            </div>
+            <div class="field-card">
+                <label class="field-label" for="random-edge-count">Số cạnh</label>
+                <input type="number" id="random-edge-count" min="1" value="7" placeholder="Ví dụ: 7" title="Số lượng cạnh sẽ được tạo">
+            </div>
+        </div>
+        <div class="field-grid-2">
+            <div class="field-card">
+                <label class="field-label" for="random-min-weight">Trọng số min</label>
+                <input type="number" id="random-min-weight" min="0" value="1" placeholder="Ví dụ: 1" title="Trọng số nhỏ nhất">
+            </div>
+            <div class="field-card">
+                <label class="field-label" for="random-max-weight">Trọng số max</label>
+                <input type="number" id="random-max-weight" min="0" value="9" placeholder="Ví dụ: 9" title="Trọng số lớn nhất">
+            </div>
+        </div>
+        <button class="btn-purple" onclick="generateRandomGraph()" style="width:100%" title="Sinh ngẫu nhiên đồ thị theo cấu hình ở trên">Tạo đồ thị bất kì</button>
+        <div class="hint-text">Sinh nhanh đồ thị ngẫu nhiên theo chế độ có hướng/vô hướng hiện tại.</div>
     </div>
 
     <div class="section">
@@ -252,13 +292,11 @@
             <option value="edges">Danh sách cạnh (u v w)</option>
             <option value="matrix">Ma trận kề</option>
         </select>
-
         <textarea id="raw-input" placeholder="Ví dụ:
 1: 2,5 4,10
 2: 3,3
 3: 4,1"></textarea>
-
-        <button class="btn-blue" onclick="importData()" style="width:100%">Vẽ đồ thị</button>
+<button class="btn-blue" onclick="importData()" style="width:100%">Vẽ đồ thị</button>
     </div>
 
     <div class="section">
@@ -268,6 +306,27 @@
             <button class="btn-purple" onclick="runFloydStepMode()">FLOYD</button>
         </div>
         <button class="btn-gray" onclick="resetColors()" style="width:100%; margin-top:5px">Xóa màu sắc</button>
+    </div>
+
+    <div class="section" id="path-tool-section" style="display:none;">
+        <h3>4. Đường đi ngắn nhất</h3>
+        <div class="path-select-row">
+            <div class="field-card">
+                <label class="field-label" for="path-start">Từ đỉnh</label>
+                <select id="path-start" title="Chọn đỉnh bắt đầu"></select>
+            </div>
+            <div class="path-arrow" aria-hidden="true">→</div>
+            <div class="field-card">
+                <label class="field-label" for="path-end">Đến đỉnh</label>
+                <select id="path-end" title="Chọn đỉnh kết thúc"></select>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn-green" onclick="showShortestPathOnGraph()">Show đường đi →</button>
+            <button class="btn-gray" onclick="clearPathHighlight()">Xóa đường đi</button>
+        </div>
+        <div class="hint-text" id="path-algo-note">Chạy Floyd hoặc Dijkstra để bật tính năng này.</div>
+        <div id="path-result" class="nav-info" style="display:none;"></div>
     </div>
 
     <div id="status-log">
@@ -292,10 +351,14 @@
 
 <script>
     let nodeIndex = 1;
-
     let algorithmSteps = [];
     let currentStepIndex = 0;
-    let currentAlgorithmName = '';
+    let latestShortestPathState = {
+        algorithm: null,
+        nodes: [],
+        distMatrix: [],
+        nextMatrix: []
+    };
 
     const cy = cytoscape({
         container: document.getElementById('cy'),
@@ -310,7 +373,7 @@
                     'background-color': '#fff',
                     'border-width': 2,
                     'border-color': '#2980b9',
-                    'text-valign': 'center',
+'text-valign': 'center',
                     'width': 40,
                     'height': 40,
                     'font-size': '15px'
@@ -331,26 +394,32 @@
                 }
             },
             {
-                selector: ':selected',
-                style: {
-                    'border-color': '#e74c3c',
-                    'border-width': 4,
-                    'line-color': '#e74c3c',
-                    'target-arrow-color': '#e74c3c'
-                }
+selector: ':selected',
+                style: { 'border-color': '#e74c3c', 'border-width': 4, 'line-color': '#e74c3c' }
             },
             {
                 selector: '.visiting',
-                style: {
-                    'background-color': '#f1c40f',
-                    'border-color': '#f39c12'
-                }
+                style: { 'background-color': '#f1c40f', 'border-color': '#f39c12' }
             },
             {
                 selector: '.active',
+                style: { 'background-color': '#2ecc71', 'border-color': '#27ae60' }
+            },
+            {
+                selector: '.path-node',
                 style: {
-                    'background-color': '#2ecc71',
-                    'border-color': '#27ae60'
+                    'background-color': '#ffeaa7',
+                    'border-color': '#e74c3c',
+                    'border-width': 4
+                }
+            },
+            {
+                selector: '.path-edge',
+                style: {
+                    'line-color': '#e74c3c',
+                    'target-arrow-color': '#e74c3c',
+                    'width': 5,
+                    'z-index': 999
                 }
             }
         ]
@@ -362,34 +431,118 @@
         box.scrollTop = box.scrollHeight;
     }
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function getMode() {
-        return document.getElementById('graph-mode').value;
-    }
-
-    function isUndirected() {
-        return getMode() === 'undirected';
-    }
-
-    function normalizeUndirectedPair(u, v) {
-        return Number(u) <= Number(v) ? [u, v] : [v, u];
-    }
+    function getMode() { return document.getElementById('graph-mode').value; }
+    function isUndirected() { return getMode() === 'undirected'; }
 
     function updateStyle() {
         const mode = getMode();
-        cy.style()
-            .selector('edge')
-            .style({
-                'target-arrow-shape': mode === 'directed' ? 'triangle' : 'none'
-            })
-            .update();
+        cy.style().selector('edge').style({ 'target-arrow-shape': mode === 'directed' ? 'triangle' : 'none' }).update();
+    }
+
+    function clearPathHighlight() {
+        cy.elements().removeClass('path-node path-edge');
+        const resultBox = document.getElementById('path-result');
+        resultBox.style.display = 'none';
+        resultBox.innerHTML = '';
+    }
+
+    function resetShortestPathTool() {
+        latestShortestPathState = { algorithm: null, nodes: [], distMatrix: [], nextMatrix: [] };
+        clearPathHighlight();
+        document.getElementById('path-tool-section').style.display = 'none';
+        document.getElementById('path-start').innerHTML = '';
+        document.getElementById('path-end').innerHTML = '';
+        document.getElementById('path-algo-note').innerText = 'Chạy Floyd hoặc Dijkstra để bật tính năng này.';
+    }
+function populatePathSelectors(nodes) {
+        const startSelect = document.getElementById('path-start');
+        const endSelect = document.getElementById('path-end');
+        const options = nodes.map(id => `<option value="${id}">${id}</option>`).join('');
+        startSelect.innerHTML = options;
+        endSelect.innerHTML = options;
+        if (nodes.length > 1) endSelect.value = nodes[nodes.length - 1];
+    }
+
+    function prepareShortestPathTool(algorithm, nodes, distMatrix, nextMatrix) {
+        latestShortestPathState = {
+            algorithm,
+            nodes: [...nodes],
+            distMatrix: cloneMatrix(distMatrix),
+            nextMatrix: nextMatrix.map(row => [...row])
+        };
+        populatePathSelectors(nodes);
+        document.getElementById('path-tool-section').style.display = 'block';
+        document.getElementById('path-algo-note').innerText = `Đang dùng kết quả từ ${algorithm.toUpperCase()}. Chọn 2 đỉnh rồi bấm "Show đường đi".`;
+        clearPathHighlight();
+    }
+
+    function findGraphEdgeBetween(u, v) {
+        let edge = cy.$(`edge[source="${u}"][target="${v}"]`);
+        if (!edge.length && isUndirected()) edge = cy.$(`edge[source="${v}"][target="${u}"]`);
+        return edge;
+    }
+
+    function highlightPath(path) {
+        clearPathHighlight();
+        path.forEach(id => cy.$(`#${id}`).addClass('path-node'));
+        for (let i = 0; i < path.length - 1; i++) {
+            findGraphEdgeBetween(path[i], path[i + 1]).addClass('path-edge');
+        }
+    }
+
+    function reconstructPathFromNext(startNode, endNode) {
+        const { nodes, distMatrix, nextMatrix } = latestShortestPathState;
+        const startIndex = nodes.indexOf(startNode);
+        const endIndex = nodes.indexOf(endNode);
+        if (startIndex === -1 || endIndex === -1) return { path: [], distance: Infinity };
+
+        const distance = distMatrix[startIndex][endIndex];
+        if (distance === Infinity) return { path: [], distance };
+
+        if (startNode === endNode) return { path: [startNode], distance: 0 };
+
+        const path = [startNode];
+        let currentIndex = startIndex;
+        let safety = 0;
+
+        while (currentIndex !== endIndex && safety <= nodes.length + 5) {
+            const nextNode = nextMatrix[currentIndex][endIndex];
+            if (!nextNode) return { path: [], distance: Infinity };
+            path.push(nextNode);
+            currentIndex = nodes.indexOf(nextNode);
+            safety++;
+        }
+
+        if (currentIndex !== endIndex) return { path: [], distance: Infinity };
+        return { path, distance };
+    }
+
+    function showShortestPathOnGraph() {
+        if (!latestShortestPathState.algorithm) return alert('Hãy chạy Dijkstra hoặc Floyd trước!');
+        const startNode = document.getElementById('path-start').value;
+        const endNode = document.getElementById('path-end').value;
+        if (!startNode || !endNode) return alert('Hãy chọn đủ 2 đỉnh!');
+const result = reconstructPathFromNext(startNode, endNode);
+        const resultBox = document.getElementById('path-result');
+        resultBox.style.display = 'block';
+
+        if (!result.path.length) {
+            clearPathHighlight();
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<b>Không tồn tại đường đi</b> từ ${startNode} đến ${endNode}.`;
+            return;
+        }
+
+        highlightPath(result.path);
+        resultBox.innerHTML = `<b>${latestShortestPathState.algorithm.toUpperCase()}</b>: ${startNode} → ${endNode}<br>`
+            + `Độ dài ngắn nhất: <b>${result.distance}</b><br>`
+            + `Đường đi: <b>${result.path.join(' → ')}</b>`;
+        cy.fit(cy.$('.path-node, .path-edge'), 80);
     }
 
     function resetColors() {
         cy.elements().removeClass('visiting active');
+        clearPathHighlight();
         log("Đã xóa màu sắc.");
     }
 
@@ -397,26 +550,22 @@
         cy.elements().remove();
         nodeIndex = 1;
         clearStepViewer();
+        resetShortestPathTool();
         document.getElementById('result-title').innerText = 'KẾT QUẢ BẢNG BƯỚC LẶP';
-        document.getElementById('table-container').innerHTML = '<i>Chưa có dữ liệu. Hãy chạy thuật toán để xem bảng.</i>';
+        document.getElementById('table-container').innerHTML = '<i>Chưa có dữ liệu.</i>';
         log("Đã xóa toàn bộ đồ thị.");
     }
 
     function clearStepViewer() {
         algorithmSteps = [];
         currentStepIndex = 0;
-        currentAlgorithmName = '';
         document.getElementById('step-controls').style.display = 'none';
         document.getElementById('step-info').innerHTML = '';
     }
 
     function ensureNodeExists(id) {
         if (!cy.$(`#${id}`).length) {
-            cy.add({
-                group: 'nodes',
-                data: { id: id },
-                position: { x: Math.random() * 500 + 50, y: Math.random() * 300 + 50 }
-            });
+            cy.add({ group: 'nodes', data: { id: id }, position: { x: Math.random() * 500, y: Math.random() * 300 } });
         }
     }
 
@@ -425,491 +574,440 @@
         nodeIndex = ids.length ? Math.max(...ids) + 1 : 1;
     }
 
-    function addOrUpdateEdge(u, v, w) {
-        let source = u;
-        let target = v;
-
-        if (isUndirected()) {
-            [source, target] = normalizeUndirectedPair(u, v);
-        }
-
-        const existing = cy.$(`edge[source="${source}"][target="${target}"]`);
-        if (existing.length) {
-            existing.data('weight', w);
-        } else {
-            cy.add({
-                group: 'edges',
-                data: { source, target, weight: w }
-            });
-        }
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function convertGraphRepresentation() {
-        const oldEdges = [];
-        cy.edges().forEach(edge => {
-            oldEdges.push({
-                source: edge.data('source'),
-                target: edge.data('target'),
-                weight: parseInt(edge.data('weight'))
+    function generateRandomGraph() {
+        const nodeCount = parseInt(document.getElementById('random-node-count').value);
+        let edgeCount = parseInt(document.getElementById('random-edge-count').value);
+        let minWeight = parseInt(document.getElementById('random-min-weight').value);
+        let maxWeight = parseInt(document.getElementById('random-max-weight').value);
+
+        if (isNaN(nodeCount) || nodeCount < 2) return alert('Số đỉnh phải >= 2');
+        if (isNaN(edgeCount) || edgeCount < 1) return alert('Số cạnh phải >= 1');
+        if (isNaN(minWeight) || isNaN(maxWeight)) return alert('Trọng số không hợp lệ!');
+        if (minWeight > maxWeight) [minWeight, maxWeight] = [maxWeight, minWeight];
+
+        const maxEdges = isUndirected()
+            ? (nodeCount * (nodeCount - 1)) / 2
+            : nodeCount * (nodeCount - 1);
+
+        if (edgeCount > maxEdges) {
+            edgeCount = maxEdges;
+document.getElementById('random-edge-count').value = edgeCount;
+            alert(`Với ${nodeCount} đỉnh, chế độ hiện tại chỉ cho tối đa ${maxEdges} cạnh.`);
+        }
+
+        cy.elements().remove();
+        clearStepViewer();
+        resetShortestPathTool();
+
+        for (let i = 1; i <= nodeCount; i++) {
+            cy.add({
+                group: 'nodes',
+                data: { id: String(i) },
+                position: { x: randomInt(80, 700), y: randomInt(80, 420) }
             });
-        });
+        }
 
-        cy.edges().remove();
+        const usedEdges = new Set();
 
-        oldEdges.forEach(e => {
-            addOrUpdateEdge(e.source, e.target, e.weight);
-        });
+        function makeEdgeKey(u, v) {
+            return isUndirected()
+                ? [u, v].sort((a, b) => Number(a) - Number(b)).join('-')
+                : `${u}->${v}`;
+        }
 
+        function tryAddEdge(u, v) {
+            if (u === v) return false;
+            const key = makeEdgeKey(u, v);
+            if (usedEdges.has(key)) return false;
+            usedEdges.add(key);
+            addOrUpdateEdge(u, v, randomInt(minWeight, maxWeight));
+            return true;
+        }
+
+        if (isUndirected() && edgeCount >= nodeCount - 1) {
+            for (let i = 2; i <= nodeCount; i++) {
+                const parent = randomInt(1, i - 1);
+                tryAddEdge(String(parent), String(i));
+            }
+        } else if (!isUndirected() && edgeCount >= nodeCount) {
+            for (let i = 1; i <= nodeCount; i++) {
+                const u = String(i);
+                const v = String(i === nodeCount ? 1 : i + 1);
+                tryAddEdge(u, v);
+            }
+        }
+
+        let attempts = 0;
+        const maxAttempts = Math.max(200, maxEdges * 10);
+        while (cy.edges().length < edgeCount && attempts < maxAttempts) {
+            const u = String(randomInt(1, nodeCount));
+            const v = String(randomInt(1, nodeCount));
+            tryAddEdge(u, v);
+            attempts++;
+        }
+
+        updateNodeIndexFromGraph();
         updateStyle();
+        cy.layout({ name: 'cose', animate: true }).run();
+        log(`Đã tạo đồ thị ngẫu nhiên: ${nodeCount} đỉnh, ${cy.edges().length} cạnh.`);
+    }
+
+    function addOrUpdateEdge(u, v, w) {
+        let source = u, target = v;
+        if (isUndirected()) {
+            if (Number(u) > Number(v)) [source, target] = [v, u];
+        }
+        const existing = cy.$(`edge[source="${source}"][target="${target}"]`);
+        if (existing.length) existing.data('weight', w);
+        else cy.add({ group: 'edges', data: { source, target, weight: w } });
     }
 
     function handleGraphModeChange() {
-        convertGraphRepresentation();
-        log(`Đã chuyển sang ${isUndirected() ? 'đồ thị vô hướng' : 'đồ thị có hướng'}.`);
+        const oldEdges = cy.edges().map(e => ({ s: e.data('source'), t: e.data('target'), w: e.data('weight') }));
+        cy.edges().remove();
+        oldEdges.forEach(e => addOrUpdateEdge(e.s, e.t, e.w));
+        updateStyle();
+        resetShortestPathTool();
+        log(`Chuyển sang ${getMode()}.`);
     }
 
     function addNodeManual() {
         const id = nodeIndex.toString();
-        cy.add({
-            group: 'nodes',
-            data: { id: id },
-            position: { x: Math.random() * 500 + 50, y: Math.random() * 300 + 50 }
-        });
+cy.add({ group: 'nodes', data: { id: id }, position: { x: 100, y: 100 } });
         nodeIndex++;
-        log(`Đã thêm đỉnh ${id}.`);
+        resetShortestPathTool();
+        log(`Thêm đỉnh ${id}.`);
     }
 
     function removeSelected() {
         cy.remove(cy.$(':selected'));
         updateNodeIndexFromGraph();
-        log("Đã xóa phần tử được chọn.");
+        resetShortestPathTool();
     }
 
     function updateEdgeManual() {
         const u = document.getElementById('u-edge').value.trim();
         const v = document.getElementById('v-edge').value.trim();
         const w = parseInt(document.getElementById('w-edge').value);
-
-        if (!u || !v || isNaN(w)) {
-            return alert("Vui lòng nhập đủ u, v, w.");
-        }
-
-        if (!cy.$(`#${u}`).length || !cy.$(`#${v}`).length) {
-            return alert("Đỉnh không tồn tại!");
-        }
-
+        if (!u || !v || isNaN(w)) return alert("Thiếu thông tin!");
+        ensureNodeExists(u); ensureNodeExists(v);
         addOrUpdateEdge(u, v, w);
         updateStyle();
-        log(`Đã cập nhật cạnh ${u} ${isUndirected() ? '--' : '->'} ${v} = ${w}`);
+        resetShortestPathTool();
     }
 
     cy.on('dblclick', (e) => {
         if (e.target === cy) {
             const id = nodeIndex.toString();
-            cy.add({
-                group: 'nodes',
-                data: { id: id },
-                position: e.position
-            });
+            cy.add({ group: 'nodes', data: { id: id }, position: e.position });
             nodeIndex++;
-            log(`Đã thêm đỉnh ${id}.`);
+            resetShortestPathTool();
         }
-    });
-
-    cy.on('tap', 'edge', (e) => {
-        const edge = e.target;
-        const currentWeight = edge.data('weight');
-        const newWeight = prompt("Nhập trọng số mới:", currentWeight);
-
-        if (newWeight === null) return;
-
-        const w = parseInt(newWeight);
-        if (isNaN(w)) {
-            alert("Trọng số không hợp lệ.");
-            return;
-        }
-
-        const u = edge.data('source');
-        const v = edge.data('target');
-        addOrUpdateEdge(u, v, w);
-        log(`Đã đổi trọng số cạnh ${u} ${isUndirected() ? '--' : '->'} ${v} thành ${w}.`);
     });
 
     function importData() {
         const format = document.getElementById('input-format').value;
         const text = document.getElementById('raw-input').value.trim();
-
-        cy.elements().remove();
-        nodeIndex = 1;
-        clearStepViewer();
-
+        cy.elements().remove(); clearStepViewer(); resetShortestPathTool();
+        if (!text) return;
         try {
-            if (!text) {
-                alert("Bạn chưa nhập dữ liệu.");
-                return;
-            }
-
             if (format === 'list') {
                 text.split('\n').forEach(line => {
-                    if (!line.trim()) return;
-
                     const parts = line.split(':');
-                    const u = parts[0].trim();
-                    ensureNodeExists(u);
-
-                    if (parts.length > 1) {
-                        const neighbors = parts[1].trim();
-                        if (neighbors) {
-                            neighbors.split(/\s+/).forEach(pair => {
-                                const [vRaw, wRaw] = pair.split(',');
-                                if (!vRaw || wRaw === undefined) return;
-                                const v = vRaw.trim();
-                                const w = parseInt(wRaw);
-                                if (isNaN(w)) return;
-                                ensureNodeExists(v);
-                                addOrUpdateEdge(u, v, w);
-                            });
-                        }
+                    const u = parts[0].trim(); ensureNodeExists(u);
+                    if (parts[1]) {
+                        parts[1].trim().split(/\s+/).forEach(p => {
+                            const [v, w] = p.split(',');
+                            if (v && w) { ensureNodeExists(v); addOrUpdateEdge(u, v, parseInt(w)); }
+                        });
                     }
                 });
             } else if (format === 'edges') {
                 text.split('\n').forEach(line => {
-                    if (!line.trim()) return;
-                    const [u, v, wRaw] = line.trim().split(/\s+/);
-                    const w = parseInt(wRaw);
-
-                    if (!u || !v || isNaN(w)) return;
-
-                    ensureNodeExists(u);
-                    ensureNodeExists(v);
-                    addOrUpdateEdge(u, v, w);
+                    const [u, v, w] = line.trim().split(/\s+/);
+                    if (u && v && w) { ensureNodeExists(u); ensureNodeExists(v); addOrUpdateEdge(u, v, parseInt(w)); }
                 });
             } else if (format === 'matrix') {
-                const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
-                const n = lines.length;
-
-                for (let i = 1; i <= n; i++) {
-                    ensureNodeExists(i.toString());
-                }
-
-                for (let i = 0; i < n; i++) {
-                    const arr = lines[i].split(/\s+/);
-                    for (let j = 0; j < arr.length; j++) {
-                        const w = parseInt(arr[j]);
-                        // CẬP NHẬT: Chấp nhận trọng số âm (w !== 0), ngoại trừ đường chéo chính thường là 0
-                        if (!isNaN(w) && w !== 0 && Math.abs(w) < 999999) {
-                            const u = (i + 1).toString();
-                            const v = (j + 1).toString();
-
-                            if (isUndirected()) {
-                                if (i <= j) addOrUpdateEdge(u, v, w);
-                            } else {
-                                addOrUpdateEdge(u, v, w);
-                            }
+                const lines = text.split('\n').filter(l => l.trim());
+                for (let i = 0; i < lines.length; i++) {
+                    const vals = lines[i].trim().split(/\s+/);
+                    for (let j = 0; j < vals.length; j++) {
+                        const w = parseInt(vals[j]);
+                        if (w !== 0 && !isNaN(w)) {
+                            ensureNodeExists((i+1).toString()); ensureNodeExists((j+1).toString());
+                            addOrUpdateEdge((i+1).toString(), (j+1).toString(), w);
                         }
                     }
                 }
             }
-
             cy.layout({ name: 'cose', animate: true }).run();
-            updateNodeIndexFromGraph();
-            updateStyle();
-            document.getElementById('table-container').innerHTML = '<i>Đã vẽ đồ thị. Chọn thuật toán để xem kết quả.</i>';
-            log("Đã import dữ liệu thành công.");
-        } catch (e) {
-            console.error(e);
-            alert("Lỗi định dạng dữ liệu!");
-        }
+            updateNodeIndexFromGraph(); updateStyle();
+} catch(e) { alert("Lỗi định dạng!"); }
     }
 
     function buildAdjacency(nodes) {
-        const adj = {};
-        nodes.forEach(id => adj[id] = []);
-
-        cy.edges().forEach(edge => {
-            const u = edge.data('source');
-            const v = edge.data('target');
-            const w = parseInt(edge.data('weight'));
-
-            if (isNaN(w)) return;
-
-            adj[u].push({ to: v, weight: w });
-
-            if (isUndirected() && u !== v) {
-                adj[v].push({ to: u, weight: w });
-            }
+        const adj = {}; nodes.forEach(id => adj[id] = []);
+        cy.edges().forEach(e => {
+            const u = e.data('source'), v = e.data('target'), w = parseInt(e.data('weight'));
+adj[u].push({ to: v, weight: w });
+            if (isUndirected() && u !== v) adj[v].push({ to: u, weight: w });
         });
-
         return adj;
     }
 
-    function cloneMatrix(mat) {
-        return mat.map(row => [...row]);
-    }
+    function cloneMatrix(mat) { return mat.map(row => [...row]); }
 
-    function runSingleSourceDijkstra(nodes, adj, startNode) {
-        const dist = {};
-        const visited = new Set();
+    // --- LOGIC DIJKSTRA PTIT MỚI ---
 
-        nodes.forEach(id => dist[id] = Infinity);
-        dist[startNode] = 0;
+    function runDetailedDijkstra(nodes, adj, startNode) {
+        const d = {}, truoc = {}, stepsData = [], visited = new Set();
+        nodes.forEach(id => { d[id] = Infinity; truoc[id] = null; });
+        d[startNode] = 0;
+        truoc[startNode] = startNode;
 
-        while (visited.size < nodes.length) {
+        stepsData.push({
+            label: "Khởi tạo",
+            snapshot: nodes.map(id => ({ id, dist: d[id], parent: truoc[id] ?? '-', isFixed: false }))
+        });
+
+        for (let i = 0; i < nodes.length; i++) {
             let u = null;
-
             nodes.forEach(id => {
-                if (!visited.has(id) && (u === null || dist[id] < dist[u])) {
-                    u = id;
+                if (!visited.has(id) && (u === null || d[id] < d[u])) u = id;
+            });
+            if (u === null || d[u] === Infinity) break;
+            visited.add(u);
+            const fixedNode = u;
+
+            adj[u].forEach(edge => {
+                if (!visited.has(edge.to) && d[u] + edge.weight < d[edge.to]) {
+                    d[edge.to] = d[u] + edge.weight;
+                    truoc[edge.to] = u;
                 }
             });
 
-            if (u === null || dist[u] === Infinity) break;
-
-            visited.add(u);
-
-            for (const neighbor of adj[u]) {
-                const v = neighbor.to;
-                const w = neighbor.weight;
-                if (!visited.has(v) && dist[u] + w < dist[v]) {
-                    dist[v] = dist[u] + w;
-                }
-            }
+            stepsData.push({
+                fixed: fixedNode,
+                snapshot: nodes.map(id => ({ id, dist: d[id], parent: truoc[id] ?? '-', isFixed: visited.has(id) }))
+            });
         }
-
-        return dist;
+        return { finalDist: d, previous: truoc, steps: stepsData };
     }
 
-    function renderMatrix(nodes, matrix, title, note = '') {
-        let html = `<div class="result-block">`;
-        html += `<h4>${title}</h4>`;
-        if (note) html += `<div class="mini-note">${note}</div>`;
-        html += `<table><thead><tr><th>Từ \\ Đến</th>`;
+    function buildPathFromPrevious(previous, startNode, endNode, distance) {
+        if (distance === Infinity) return [];
+        if (startNode === endNode) return [startNode];
 
+        const path = [];
+        let current = endNode;
+        const seen = new Set();
+
+        while (current !== null && !seen.has(current)) {
+            path.push(current);
+            if (current === startNode) break;
+            seen.add(current);
+            current = previous[current];
+        }
+
+        if (path[path.length - 1] !== startNode) return [];
+        return path.reverse();
+    }
+
+    function renderDetailTable(nodes, steps, startNode) {
+        let html = `<div class="result-block" style="border-left:4px solid #e74c3c;">`;
+        html += `<h4>Bảng chi tiết (Nguồn: ${startNode})</h4><table><thead><tr><th>Bước</th>`;
+        nodes.forEach(n => html += `<th>Đỉnh ${n}</th>`);
+        html += `</tr></thead><tbody>`;
+        steps.forEach((s, idx) => {
+            html += `<tr><td>${idx === 0 ? 'K.Tạo' : 'B.' + idx}</td>`;
+            s.snapshot.forEach(item => {
+const val = item.dist === Infinity ? '∞' : item.dist;
+                const display = `${val}, ${item.parent}`;
+                const isJustFixed = s.fixed === item.id;
+                const style = isJustFixed ? 'color:#c0392b; font-weight:bold; background:#ffebeb;' : (item.isFixed ? 'color:#95a5a6;' : '');
+                html += `<td style="${style}">${display}${isJustFixed ? ' *' : ''}</td>`;
+            });
+            html += `</tr>`;
+        });
+        return html + `</tbody></table></div>`;
+    }
+
+    function renderMatrix(nodes, matrix, title, note = '', options = {}) {
+        const changedCells = options.changedCells || [];
+        const changedSet = new Set(changedCells.map(cell => `${cell.i}-${cell.j}`));
+        const parentMatrix = options.parentMatrix || null;
+        const showParent = options.showParent === true && parentMatrix;
+        let html = `<div class="result-block"><h4>${title}</h4>`;
+        if (note) html += `<div style="font-size:12px; color:gray; margin-bottom:5px;">${note}</div>`;
+        if (showParent) {
+            html += `<div style="font-size:12px; color:#34495e; margin-bottom:6px;"><b>Mỗi ô hiển thị:</b> khoảng cách<br><span style="color:#7f8c8d;">cha: đỉnh đứng ngay trước đỉnh đích trên đường đi ngắn nhất</span></div>`;
+        }
+        if (changedCells.length) {
+            html += `<div style="font-size:12px; color:#8a6d3b; margin-bottom:6px;"><b>Ô nền vàng</b> là các giá trị vừa được cập nhật ở bước này.</div>`;
+        }
+        html += `<table><thead><tr><th>Từ \\ Đến</th>`;
         nodes.forEach(n => html += `<th>${n}</th>`);
         html += `</tr></thead><tbody>`;
-
         for (let i = 0; i < nodes.length; i++) {
-            html += `<tr><td><b>${nodes[i]}</b></td>`;
+html += `<tr><td><b>${nodes[i]}</b></td>`;
             for (let j = 0; j < nodes.length; j++) {
-                const value = matrix[i][j];
-                html += `<td>${value === Infinity ? '∞' : value}</td>`;
+                const v = matrix[i][j];
+                const isChanged = changedSet.has(`${i}-${j}`);
+                const style = isChanged
+                    ? 'background:#fff3cd; color:#c0392b; font-weight:bold; box-shadow: inset 0 0 0 2px #f1c40f;'
+                    : '';
+                const distanceText = v === Infinity ? '∞' : v;
+                if (showParent) {
+                    const parent = parentMatrix[i][j];
+                    const parentText = parent === null || parent === undefined ? '-' : parent;
+                    html += `<td style="${style}"><div>${distanceText}</div><div style="font-size:11px; color:${isChanged ? '#c0392b' : '#7f8c8d'};">cha: ${parentText}</div></td>`;
+                } else {
+                    html += `<td style="${style}">${distanceText}</td>`;
+                }
             }
             html += `</tr>`;
         }
-
-        html += `</tbody></table></div>`;
-        return html;
-    }
-
-    function showCurrentStep() {
-        if (!algorithmSteps.length) return;
-
-        const step = algorithmSteps[currentStepIndex];
-        const controls = document.getElementById('step-controls');
-        const stepInfo = document.getElementById('step-info');
-        const container = document.getElementById('table-container');
-        const prevBtn = document.getElementById('prev-step-btn');
-        const nextBtn = document.getElementById('next-step-btn');
-
-        controls.style.display = 'block';
-        stepInfo.innerHTML = `<b>${step.label}</b> &nbsp; | &nbsp; Bước ${currentStepIndex + 1}/${algorithmSteps.length}`;
-        container.innerHTML = step.html;
-
-        prevBtn.disabled = currentStepIndex === 0;
-        nextBtn.disabled = currentStepIndex === algorithmSteps.length - 1;
-    }
-
-    function showPrevStep() {
-        if (currentStepIndex > 0) {
-            currentStepIndex--;
-            showCurrentStep();
-        }
-    }
-
-    function showNextStep() {
-        if (currentStepIndex < algorithmSteps.length - 1) {
-            currentStepIndex++;
-            showCurrentStep();
-        }
+        return html + `</tbody></table></div>`;
     }
 
     async function runDijkstraAllPairs() {
         resetColors();
-
-        // --- CẬP NHẬT: KIỂM TRA TRỌNG SỐ ÂM ---
-        const edges = cy.edges();
-        let hasNegativeEdge = false;
-        for(let i = 0; i < edges.length; i++) {
-            if (parseInt(edges[i].data('weight')) < 0) {
-                hasNegativeEdge = true;
-                break;
-            }
+        if (cy.edges().some(e => parseInt(e.data('weight')) < 0)) {
+if (confirm("Đồ thị có trọng số âm! Chuyển sang Floyd?")) runFloydStepMode();
+            return;
         }
-
-        if (hasNegativeEdge) {
-            const confirmSwitch = confirm("CẢNH BÁO: Đồ thị có chứa trọng số âm!\n\nThuật toán Dijkstra không hoạt động chính xác với cạnh có trọng số âm. Bạn nên sử dụng thuật toán Floyd-Warshall để thay thế.\n\nBạn có muốn chuyển sang chạy thuật toán Floyd không?");
-            if (confirmSwitch) {
-                runFloydStepMode();
-            }
-            return; 
-        }
-        // --- KẾT THÚC KIỂM TRA ---
-
         clearStepViewer();
         const nodes = cy.nodes().map(n => n.id()).sort((a, b) => Number(a) - Number(b));
-        const n = nodes.length;
-
-        if (n === 0) {
-            return alert("Đồ thị đang rỗng.");
-        }
+        if (!nodes.length) return alert("Rỗng!");
 
         const adj = buildAdjacency(nodes);
-        const distMatrix = Array.from({ length: n }, () => Array(n).fill(Infinity));
+        const distMatrix = Array.from({ length: nodes.length }, () => Array(nodes.length).fill(Infinity));
+        const nextMatrix = Array.from({ length: nodes.length }, () => Array(nodes.length).fill(null));
+        const allSteps = [];
 
-        document.getElementById('result-title').innerText = "CÁC BƯỚC DIJKSTRA THEO ĐỈNH i";
-        log("Bắt đầu Dijkstra toàn cặp.");
+        for (let i = 0; i < nodes.length; i++) {
+            const startNode = nodes[i];
+            const res = runDetailedDijkstra(nodes, adj, startNode);
 
-        const steps = [];
-
-        for (let i = 0; i < n; i++) {
-            const source = nodes[i];
-            cy.elements().removeClass('visiting active');
-            cy.$(`#${source}`).addClass('visiting');
-
-            await sleep(350);
-
-            const dist = runSingleSourceDijkstra(nodes, adj, source);
-
-            for (let j = 0; j < n; j++) {
-                distMatrix[i][j] = dist[nodes[j]];
+            for (let j = 0; j < nodes.length; j++) {
+                const endNode = nodes[j];
+                distMatrix[i][j] = res.finalDist[endNode];
+                const path = buildPathFromPrevious(res.previous, startNode, endNode, res.finalDist[endNode]);
+                nextMatrix[i][j] = path.length > 1 ? path[1] : (path.length === 1 ? path[0] : null);
             }
 
-            cy.$(`#${source}`).removeClass('visiting').addClass('active');
-
-            steps.push({
-                label: `Đỉnh i = ${source}`,
-                html: renderMatrix(
-                    nodes,
-                    cloneMatrix(distMatrix),
-                    `Bước i = ${source}`,
-                    `Đã chạy Dijkstra với đỉnh nguồn là ${source}. Hàng ${source} đã được cập nhật.`
-                )
-            });
-
-            log(`Đã xong Dijkstra với đỉnh nguồn i = ${source}.`);
+            allSteps.push({ label: `Chi tiết Dijkstra đỉnh ${startNode}`, html: renderDetailTable(nodes, res.steps, startNode) });
+            allSteps.push({ label: `Cập nhật Ma trận (Hàng ${startNode})`, html: renderMatrix(nodes, cloneMatrix(distMatrix), `Ma trận sau đỉnh ${startNode}`) });
         }
 
-        steps.push({
-            label: 'Ma trận kết quả cuối',
-            html: renderMatrix(
-                nodes,
-                cloneMatrix(distMatrix),
-                'Ma trận đường đi ngắn nhất bằng Dijkstra',
-                'Kết quả sau khi chạy Dijkstra từ tất cả các đỉnh nguồn.'
-            )
-        });
-
-        algorithmSteps = steps;
-        currentStepIndex = 0;
-        currentAlgorithmName = 'dijkstra';
+        prepareShortestPathTool('dijkstra', nodes, distMatrix, nextMatrix);
+        algorithmSteps = allSteps;
         showCurrentStep();
-        log("Dijkstra toàn cặp hoàn tất.");
+        document.getElementById('result-title').innerText = "CÁC BƯỚC DIJKSTRA CHI TIẾT";
+        log("Đã sẵn sàng nút show đường đi ngắn nhất theo Dijkstra.");
     }
 
+    // --- FLOYD (GIỮ NGUYÊN) ---
+
     async function runFloydStepMode() {
-        resetColors();
-        clearStepViewer();
-
+        resetColors(); clearStepViewer();
         const nodes = cy.nodes().map(n => n.id()).sort((a, b) => Number(a) - Number(b));
-        const n = nodes.length;
-
-        if (n === 0) {
-            return alert("Đồ thị đang rỗng.");
-        }
+        const n = nodes.length; if (!n) return;
 
         let dist = Array.from({ length: n }, () => Array(n).fill(Infinity));
-        for (let i = 0; i < n; i++) dist[i][i] = 0;
+        let next = Array.from({ length: n }, () => Array(n).fill(null));
+        let parent = Array.from({ length: n }, () => Array(n).fill(null));
 
-        cy.edges().forEach(edge => {
-            const source = edge.data('source');
-            const target = edge.data('target');
-            const w = parseInt(edge.data('weight'));
-            const u = nodes.indexOf(source);
-            const v = nodes.indexOf(target);
+        for (let i = 0; i < n; i++) {
+            dist[i][i] = 0;
+            next[i][i] = nodes[i];
+            parent[i][i] = nodes[i];
+        }
 
-            if (u !== -1 && v !== -1 && !isNaN(w)) {
-                dist[u][v] = Math.min(dist[u][v], w);
-                if (isUndirected()) {
-                    dist[v][u] = Math.min(dist[v][u], w);
-                }
+        cy.edges().forEach(e => {
+            const u = nodes.indexOf(e.data('source'));
+            const v = nodes.indexOf(e.data('target'));
+            const w = parseInt(e.data('weight'));
+
+            if (w < dist[u][v]) {
+                dist[u][v] = w;
+                next[u][v] = nodes[v];
+                parent[u][v] = nodes[u];
+            }
+
+            if (isUndirected() && w < dist[v][u]) {
+                dist[v][u] = w;
+                next[v][u] = nodes[u];
+                parent[v][u] = nodes[v];
             }
         });
 
-        document.getElementById('result-title').innerText = "CÁC BƯỚC FLOYD THEO ĐỈNH i";
-        log("Bắt đầu Floyd.");
-
-        const steps = [];
-        steps.push({
-            label: 'Khởi tạo',
+        const steps = [{
+label: 'Khởi tạo',
             html: renderMatrix(
                 nodes,
                 cloneMatrix(dist),
                 'Ma trận khởi tạo',
-                'Ma trận ban đầu trước khi thực hiện Floyd.'
+                'Đây là ma trận khoảng cách ban đầu kèm đỉnh cha.',
+                { parentMatrix: cloneMatrix(parent), showParent: true }
             )
-        });
+        }];
 
-        for (let i = 0; i < n; i++) {
-            const midNode = nodes[i];
-            cy.elements().removeClass('visiting active');
-            cy.$(`#${midNode}`).addClass('visiting');
-
-            for (let r = 0; r < n; r++) {
-                for (let c = 0; c < n; c++) {
-                    if (dist[r][i] !== Infinity && dist[i][c] !== Infinity) {
-                        if (dist[r][i] + dist[i][c] < dist[r][c]) {
-                            dist[r][c] = dist[r][i] + dist[i][c];
-                        }
+        for (let k = 0; k < n; k++) {
+            const changedCells = [];
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    if (dist[i][k] === Infinity || dist[k][j] === Infinity) continue;
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        next[i][j] = next[i][k];
+                        parent[i][j] = parent[k][j];
+                        changedCells.push({ i, j });
                     }
                 }
             }
 
-            await sleep(350);
-
-            cy.$(`#${midNode}`).removeClass('visiting').addClass('active');
+            const note = changedCells.length
+                ? `Đỉnh trung gian đang xét: ${nodes[k]}. Có ${changedCells.length} ô được cập nhật ở bước này.`
+                : `Đỉnh trung gian đang xét: ${nodes[k]}. Không có ô nào thay đổi ở bước này.`;
 
             steps.push({
-                label: `Đỉnh i = ${midNode}`,
+                label: `Đỉnh trung gian i = ${nodes[k]}`,
                 html: renderMatrix(
                     nodes,
                     cloneMatrix(dist),
-                    `Bước i = ${midNode}`,
-                    `Dùng đỉnh ${midNode} làm trung gian để cập nhật ma trận Floyd.`
+                    `Bước i = ${nodes[k]}`,
+                    note,
+                    { changedCells, parentMatrix: cloneMatrix(parent), showParent: true }
                 )
             });
-
-            log(`Đã xong Floyd với đỉnh trung gian i = ${midNode}.`);
         }
 
-        steps.push({
-            label: 'Ma trận kết quả cuối',
-            html: renderMatrix(
-                nodes,
-                cloneMatrix(dist),
-                'Ma trận đường đi ngắn nhất bằng Floyd',
-                'Kết quả cuối cùng sau khi xét tất cả các đỉnh trung gian.'
-            )
-        });
-
+        prepareShortestPathTool('floyd', nodes, dist, next);
         algorithmSteps = steps;
-        currentStepIndex = 0;
-        currentAlgorithmName = 'floyd';
         showCurrentStep();
-        log("Floyd hoàn tất.");
+        document.getElementById('result-title').innerText = "CÁC BƯỚC FLOYD";
+        log("Đã sẵn sàng nút show đường đi ngắn nhất theo Floyd.");
     }
+
+    function showCurrentStep() {
+if (!algorithmSteps.length) return;
+        const step = algorithmSteps[currentStepIndex];
+        document.getElementById('step-controls').style.display = 'block';
+        document.getElementById('step-info').innerHTML = `<b>${step.label}</b> | Bước ${currentStepIndex + 1}/${algorithmSteps.length}`;
+        document.getElementById('table-container').innerHTML = step.html;
+        document.getElementById('prev-step-btn').disabled = currentStepIndex === 0;
+        document.getElementById('next-step-btn').disabled = currentStepIndex === algorithmSteps.length - 1;
+    }
+
+    function showPrevStep() { if (currentStepIndex > 0) { currentStepIndex--; showCurrentStep(); } }
+    function showNextStep() { if (currentStepIndex < algorithmSteps.length - 1) { currentStepIndex++; showCurrentStep(); } }
 
     updateStyle();
 </script>
-
 </body>
 </html>
